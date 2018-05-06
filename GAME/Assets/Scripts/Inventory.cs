@@ -7,6 +7,7 @@ public class Inventory : MonoBehaviour {
 
 	List<Item>list;
 	public GameObject inventory;
+	public GameObject UIInterface;
 	public GameObject cont;
 
 	void Start () {
@@ -27,7 +28,7 @@ public class Inventory : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.I)) {
+	if (Input.GetKeyDown (KeyCode.F)) {
 		
 			if (inventory.activeSelf) {
 				inventory.SetActive (false);
@@ -56,8 +57,9 @@ public class Inventory : MonoBehaviour {
 				}
 			}
 		}
-		
+
 	}
+
 
 //void remove (Drag drag){
 		//if (drug.item.type == "food") {
