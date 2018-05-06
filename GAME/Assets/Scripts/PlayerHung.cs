@@ -5,52 +5,46 @@ using UnityEngine.UI;
 
 public class PlayerHung : MonoBehaviour {
 
-	public float currentHungry = 100;
+	public float currentHungry;
 	public float time = 1f;
 
-	public Sprite full;
-	public Sprite H3;
-	public Sprite H2;
-	public Sprite H1;
-	public Sprite empty;
+	private float minHungry; 
+	private float maxHungry; 
 
-
-	private float minHungry = 0;
-	private float maxHungry = 100;
-
-	Image Image;
+	public Image slide;
 
 
 	void Start () {
-		Image = GetComponent<Image> ();
-		StartCoroutine (hungry (5));
+
+		maxHungry = 1f;
+		minHungry = 0f;
+		currentHungry = maxHungry;
+
+		slide = GetComponent<Image> ();
+		StartCoroutine (hungry (0.07f));
 	}
 
 
 	void Update () {
 
+		if (currentHungry > maxHungry) {
+			currentHungry = maxHungry;
+		}
+
+		if (currentHungry < 0) {
+			currentHungry = 0;
+		}
+
 		}
 
 	IEnumerator hungry (float h){
-		while (currentHungry >= minHungry) {
+		while (currentHungry > minHungry) {
 
 			yield return new WaitForSeconds (time);
 			currentHungry -= h;
-			if (currentHungry == 70) {
-				Image.sprite = H3;
-			}
+			slide.fillAmount = currentHungry;
 
-			if (currentHungry == 50) {
-				Image.sprite = H2;
-			}
 
-			if (currentHungry == 25) {
-				Image.sprite = H1;
-			}
-
-			if (currentHungry == 0) {
-				Image.sprite = empty;
-			}
 			}
 		}
 }
