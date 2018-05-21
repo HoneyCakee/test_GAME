@@ -15,6 +15,8 @@ public class MouseLook : MonoBehaviour {
 	public float min = -360;
 	public float max = 360;
 
+
+
 	Vector3 final;
 	void Update () {
 		Vector2 delta = new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
@@ -43,4 +45,6 @@ public class MouseLook : MonoBehaviour {
 		return y;
 	}
 
-}
+
+	} 
+

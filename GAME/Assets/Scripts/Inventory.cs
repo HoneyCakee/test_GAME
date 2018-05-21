@@ -5,73 +5,158 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour {
 
-	List<Item>list;
-	public GameObject inventory;
-	public GameObject UIInterface;
-	public GameObject cont;
+	public GameObject IamgeNameObj;
+	public Text TextNameObj;
+
+
+	public GameObject PanelInventory;
+	public GameObject InventScrollInstance;
+	public GameObject InventPanelInfo;
+	public Text IventoryNameObj;
+	public Image InventImageObj;
+	public Text InventNumCurObjs;
+
+	public GameObject ButtonDel;
+
+	GameObject flashlight;
+	GameObject matches;
 
 	void Start () {
-		list = new List<Item>();
+		
+
 	}
+	
 
-	void Update () {
+	void FixedUpdate () {
 
-		if (Input.GetMouseButton (1)) {
-			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			RaycastHit hit;
-			if (Physics.Raycast (ray, out hit)) {
-				Item item = hit.collider.GetComponent<Item> ();
-				if (item != null) {
-					list.Add (item);
-					Destroy (hit.collider.gameObject);
+		if (IamgeNameObj.activeSelf) {
+
+			IamgeNameObj.SetActive (false);
+		}
+		RaycastHit hit;
+
+		if (Physics.Raycast (Camera.main.transform.position, Camera.main.transform.forward, out hit, 50)) {
+			StatsObj statsObj = hit.collider.GetComponent<StatsObj> ();
+			if (statsObj != null) {
+				IamgeNameObj.SetActive (true);
+				TextNameObj.text = statsObj.NameObj;
+
+				if (Input.GetKeyUp (KeyCode.E)) {
+					if (hit.collider.tag == "Flashlights") {
+						int flashlights = GetComponent<PlayerStats> ().Flashlights;
+						if (flashlights == 0) {
+							Button butObj = hit.collider.GetComponent<StatsObj> ().ButtonObjInfo;
+							GameObject obj = Instantiate (butObj.transform.gameObject);
+							obj.transform.SetParent (InventScrollInstance.transform);
+							PlayerStats playerStats = GetComponent<PlayerStats> ();
+							playerStats.Flashlights += hit.collider.GetComponent<StatsObj> ().CurNumObj;
+							Destroy (hit.collider.gameObject);
+						} else {
+							PlayerStats playerStats = GetComponent<PlayerStats> ();
+							playerStats.Flashlights += hit.collider.GetComponent<StatsObj> ().CurNumObj;
+							Destroy (hit.collider.gameObject);
+						}
+					}
+
+					if (Input.GetKeyUp (KeyCode.E)) {
+						if (hit.collider.tag == "Matches") {
+							int matches = GetComponent<PlayerStats> ().Matches;
+							if (matches == 0) {
+								Button butObj = hit.collider.GetComponent<StatsObj> ().ButtonObjInfo;
+								GameObject obj = Instantiate (butObj.transform.gameObject);
+								obj.transform.SetParent (InventScrollInstance.transform);
+								PlayerStats playerStats = GetComponent<PlayerStats> ();
+								playerStats.Matches += hit.collider.GetComponent<StatsObj> ().CurNumObj;
+								Destroy (hit.collider.gameObject);
+							} else {
+								PlayerStats playerStats = GetComponent<PlayerStats> ();
+								playerStats.Matches += hit.collider.GetComponent<StatsObj> ().CurNumObj;
+								Destroy (hit.collider.gameObject);
+							}
+						}
+					}
 				}
 			}
 		}
 
-	if (Input.GetKeyDown (KeyCode.F)) {
-		
-			if (inventory.activeSelf) {
-				inventory.SetActive (false);
+	if (Input.GetKeyDown (KeyCode.Tab)) {
+			PanelInventory.SetActive (true);	
+			Time.timeScale = 0;
 
-				for (int i = 0; i < inventory.transform.childCount; i++) {
-					if (inventory.transform.GetChild (i).transform.childCount > 0) {
-						Destroy (inventory.transform.GetChild (i).transform.GetChild (0).gameObject);
-					}
-				}
+			GameObject M1 = GameObject.Find ("PlayerMain");
+			MouseLook MS1 = M1.GetComponent<MouseLook> ();
+			MS1.enabled = false;
 
-			} else {
-				inventory.SetActive (true);
-				int count = list.Count;
-				for (int i = 0; i < count; i++) {
-					Item it = list [i];
-					if (inventory.transform.childCount >= i) {
-						GameObject img = Instantiate (cont);
-						img.transform.SetParent (inventory.transform.GetChild (i).transform);
-						img.GetComponent<Image> ().sprite = Resources.Load<Sprite> (it.icon);
-						img.GetComponent<Drag> ().item = it;
+			GameObject M2 = GameObject.Find ("Camera");
+			MouseLook MS2 = M2.GetComponent<MouseLook> ();
+			MS2.enabled = false;
 
-
-					} else {
-						break;
-					}
-				}
-			}
 		}
+	}
+		public void ExitInventory(){
+
+			PanelInventory.SetActive(false);
+			Time.timeScale = 1;
+
+			GameObject M1 = GameObject.Find ("PlayerMain");
+			MouseLook MS1 = M1.GetComponent<MouseLook> ();
+			MS1.enabled = true;
+
+
+			GameObject M2 = GameObject.Find ("Camera");
+			MouseLook MS2 = M2.GetComponent<MouseLook> ();
+			MS2.enabled = true;
+			
+	
+	}
+
+	public void ClickButtonsInvent(Button but){
+		InventPanelInfo.SetActive (true);
+		IventoryNameObj.text = but.GetComponent<StatsObj> ().NameObj;
+		InventImageObj.sprite = but.GetComponent<StatsObj > ().SpriteObj;
+		int idObj = but.GetComponent <StatsObj> ().IdObj;
+		if (idObj == 1) {
+			InventNumCurObjs.text = GetComponent<PlayerStats> ().Flashlights.ToString();
+
+		}
+
+		if (idObj == 2) {
+			InventNumCurObjs.text = GetComponent<PlayerStats> ().Matches.ToString();
+
+		}
+
+		DeleteInventObj deleteInventObj = ButtonDel.GetComponent<DeleteInventObj> ();
+		deleteInventObj.ButtonObjDel = but;
 
 	}
 
+	public void DeleteInventObj (Button but){
+		Button obj = but.GetComponent<DeleteInventObj>().ButtonObjDel;
+		int id = obj.GetComponent<StatsObj> ().IdObj;
+		PlayerStats stats = GetComponent<PlayerStats> ();
 
-//void remove (Drag drag){
-		//if (drug.item.type == "food") {
-		
-	//	}
-	//	}
-	void remove (Drag drag){
-		Item it = drag.item;
-		GameObject newo = Instantiate<GameObject> (Resources.Load<GameObject> (it.prefab));
-		newo.transform.position = transform.position + transform.forward + transform.up;
-		list.Remove (it);
-		Destroy(drag.gameObject);
+		if (id == 1) {
+			flashlight = GameObject.FindWithTag("Flashlights");
+			Instantiate (flashlight);
+			flashlight.transform.position = transform.position + transform.forward + transform.up;
+			stats.Flashlights -= 1;
+			InventNumCurObjs.text = GetComponent<PlayerStats> ().Flashlights.ToString();
+			if (stats.Flashlights == 0){
+				IamgeNameObj.SetActive (false);
+				Destroy (obj.gameObject);
+			}
+		}
 
+		if (id == 2) {
+			matches = GameObject.FindWithTag("Matches");
+			Instantiate (matches);
+			matches.transform.position = transform.position + transform.forward + transform.up;
+			stats.Matches -= 1;
+			InventNumCurObjs.text = GetComponent<PlayerStats> ().Matches.ToString();
+			if (stats.Matches == 0){
+				IamgeNameObj.SetActive (false);
+				Destroy (obj.gameObject);
+			}
+		}
 	}
 }
