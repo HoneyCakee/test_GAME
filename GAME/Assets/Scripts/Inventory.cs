@@ -22,8 +22,8 @@ public class Inventory : MonoBehaviour {
 	GameObject matches;
 
 	void Start () {
-		
 
+		UnityEngine.Cursor.visible = false;
 	}
 	
 
@@ -80,7 +80,8 @@ public class Inventory : MonoBehaviour {
 		}
 
 	if (Input.GetKeyDown (KeyCode.Tab)) {
-			PanelInventory.SetActive (true);	
+			PanelInventory.SetActive (true);
+			UnityEngine.Cursor.visible = true;
 			Time.timeScale = 0;
 
 			GameObject M1 = GameObject.Find ("PlayerMain");
@@ -96,7 +97,9 @@ public class Inventory : MonoBehaviour {
 		public void ExitInventory(){
 
 			PanelInventory.SetActive(false);
+			UnityEngine.Cursor.visible = false;
 			Time.timeScale = 1;
+			
 
 			GameObject M1 = GameObject.Find ("PlayerMain");
 			MouseLook MS1 = M1.GetComponent<MouseLook> ();
